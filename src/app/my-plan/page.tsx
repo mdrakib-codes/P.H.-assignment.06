@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   Check,
+  ChevronDown,
   Clock3,
   Flame,
   Star,
@@ -16,6 +17,7 @@ import Footer from "@/components/Footer";
 import { useFitLog } from "@/context/FitLogContext";
 
 type Tab = "plan" | "saved";
+type SortOption = "duration" | "rating" | "calories";
 
 export default function MyPlanPage() {
   const {
@@ -27,7 +29,11 @@ export default function MyPlanPage() {
     markAsDone,
   } = useFitLog();
 
-  const [activeTab, setActiveTab] = useState<Tab>("plan");
+  const [activeTab, setActiveTab] =
+    useState<Tab>("plan");
+
+  const [sortBy, setSortBy] =
+    useState<SortOption>("duration");
 
   const minutes = plan.reduce(
     (total, workout) => total + workout.duration,
@@ -35,12 +41,31 @@ export default function MyPlanPage() {
   );
 
   const calories = plan.reduce(
-    (total, workout) => total + workout.caloriesBurned,
+    (total, workout) =>
+      total + workout.caloriesBurned,
     0
   );
 
   const currentList =
     activeTab === "plan" ? plan : saved;
+
+  const sortedList = useMemo(() => {
+    const list = [...currentList];
+
+    list.sort((a, b) => {
+      if (sortBy === "duration") {
+        return a.duration - b.duration;
+      }
+
+      if (sortBy === "rating") {
+        return b.rating - a.rating;
+      }
+
+      return b.caloriesBurned - a.caloriesBurned;
+    });
+
+    return list;
+  }, [currentList, sortBy]);
 
   if (!hydrated) {
     return (
@@ -69,7 +94,7 @@ export default function MyPlanPage() {
       <main className="min-h-screen bg-[#090a0c]">
         <div className="mx-auto max-w-7xl px-6 py-12 md:px-10 lg:px-12">
 
-          {/* Heading */}
+          {/* Page Heading */}
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#ccff00]">
               Your Log
@@ -102,44 +127,82 @@ export default function MyPlanPage() {
             />
           </div>
 
-          {/* Tabs */}
-          <div className="mt-8 flex border-b border-[#252932]">
+          {/* Tabs + Sort */}
+          <div className="mt-8 flex flex-col gap-4 border-b border-[#252932] sm:flex-row sm:items-end sm:justify-between">
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("plan")}
-              className={`px-4 pb-3 text-[10px] font-bold uppercase tracking-wider transition ${
-                activeTab === "plan"
-                  ? "border-b-2 border-[#ccff00] text-[#ccff00]"
-                  : "text-[#777d87] hover:text-white"
-              }`}
-            >
-              Today's Plan
-            </button>
+            {/* Tabs */}
+            <div className="flex">
 
-            <button
-              type="button"
-              onClick={() => setActiveTab("saved")}
-              className={`px-4 pb-3 text-[10px] font-bold uppercase tracking-wider transition ${
-                activeTab === "saved"
-                  ? "border-b-2 border-[#ccff00] text-[#ccff00]"
-                  : "text-[#777d87] hover:text-white"
-              }`}
-            >
-              Saved
-            </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("plan")}
+                className={`px-4 pb-3 text-[10px] font-bold uppercase tracking-wider transition ${
+                  activeTab === "plan"
+                    ? "border-b-2 border-[#ccff00] text-[#ccff00]"
+                    : "text-[#777d87] hover:text-white"
+                }`}
+              >
+                Today&apos;s Plan
+              </button>
 
+              <button
+                type="button"
+                onClick={() => setActiveTab("saved")}
+                className={`px-4 pb-3 text-[10px] font-bold uppercase tracking-wider transition ${
+                  activeTab === "saved"
+                    ? "border-b-2 border-[#ccff00] text-[#ccff00]"
+                    : "text-[#777d87] hover:text-white"
+                }`}
+              >
+                Saved
+              </button>
+
+            </div>
+
+            {/* Sort By */}
+            <div className="relative mb-2 self-end">
+
+              <select
+                value={sortBy}
+                onChange={(event) =>
+                  setSortBy(
+                    event.target.value as SortOption
+                  )
+                }
+                className="appearance-none rounded-md border border-[#30343c] bg-[#111318] py-2 pl-3 pr-9 text-[9px] font-semibold uppercase text-white outline-none transition focus:border-[#ccff00]"
+              >
+                <option value="duration">
+                  Sort by Duration
+                </option>
+
+                <option value="rating">
+                  Sort by Rating
+                </option>
+
+                <option value="calories">
+                  Sort by Calories
+                </option>
+              </select>
+
+              <ChevronDown
+                size={12}
+                className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#777d87]"
+              />
+
+            </div>
           </div>
 
-          {/* Content */}
+          {/* Workout List */}
           <div className="mt-6">
 
-            {currentList.length === 0 ? (
-              <EmptyState activeTab={activeTab} />
+            {sortedList.length === 0 ? (
+              <EmptyState
+                activeTab={activeTab}
+              />
             ) : (
               <div className="space-y-3">
 
-                {currentList.map((workout) => (
+                {sortedList.map((workout) => (
                   <PlanCard
                     key={workout.id}
                     workout={workout}
@@ -209,12 +272,14 @@ function PlanCard({
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-[#252932] bg-[#111318] p-3 sm:flex-row sm:items-center">
 
+      {/* Image */}
       <img
         src={workout.image}
         alt={workout.name}
         className="h-24 w-full rounded-md object-cover sm:h-20 sm:w-28"
       />
 
+      {/* Information */}
       <div className="min-w-0 flex-1">
 
         <h2 className="text-xs font-extrabold uppercase text-white">
@@ -245,11 +310,12 @@ function PlanCard({
         </div>
       </div>
 
+      {/* Actions */}
       <div className="flex flex-wrap gap-2 sm:justify-end">
 
         <Link
           href={`/workout/${workout.id}`}
-          className="rounded-md border border-[#30343c] px-3 py-2 text-[9px] font-bold uppercase text-white hover:border-[#ccff00] hover:text-[#ccff00]"
+          className="rounded-md border border-[#30343c] px-3 py-2 text-[9px] font-bold uppercase text-white transition hover:border-[#ccff00] hover:text-[#ccff00]"
         >
           View Details
         </Link>
@@ -258,7 +324,7 @@ function PlanCard({
           <button
             type="button"
             onClick={() => onDone(workout.id)}
-            className="inline-flex items-center gap-1 rounded-md bg-[#ccff00] px-3 py-2 text-[9px] font-bold uppercase text-[#090a0c]"
+            className="inline-flex items-center gap-1 rounded-md bg-[#ccff00] px-3 py-2 text-[9px] font-bold uppercase text-[#090a0c] transition hover:bg-[#ddff4d]"
           >
             <Check size={11} />
             Mark as Done
@@ -268,7 +334,7 @@ function PlanCard({
         <button
           type="button"
           onClick={() => onRemove(workout.id)}
-          className="inline-flex items-center justify-center rounded-md border border-[#30343c] px-2.5 py-2 text-white hover:border-red-400 hover:text-red-400"
+          className="inline-flex items-center justify-center rounded-md border border-[#30343c] px-2.5 py-2 text-white transition hover:border-red-400 hover:text-red-400"
           aria-label="Remove workout"
         >
           <X size={13} />

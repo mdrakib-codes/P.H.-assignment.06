@@ -1,8 +1,8 @@
 import { Workout } from "@/types/workout";
 
-const API_URL = "https://api.abcz.workers.dev/api/fitlog";
+const API_URL =
+  "https://api.api-store.workers.dev/api/fitlog";
 
-// Get all workouts
 export async function getWorkouts(): Promise<Workout[]> {
   const response = await fetch(API_URL);
 
@@ -15,7 +15,6 @@ export async function getWorkouts(): Promise<Workout[]> {
   return data;
 }
 
-// Get single workout by ID
 export async function getWorkout(
   id: string
 ): Promise<Workout | null> {
