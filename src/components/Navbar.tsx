@@ -2,81 +2,110 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { useFitLog } from "@/context/FitLogContext";
 
 export default function Navbar() {
   const { plan, saved } = useFitLog();
+  const pathname = usePathname();
+
+  const workoutActive = pathname === "/";
+  const planActive = pathname === "/my-plan";
 
   return (
-    <header className="border-b border-[#202329] bg-[#090a0c]">
-      <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header className="border-b border-[#202228] bg-[#090a0c]">
+      <div className="mx-auto flex h-[52px] max-w-[1200px] items-center justify-between px-5 sm:px-8">
         
         {/* Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2.5"
+          className="flex items-center gap-2"
         >
           <Image
             src="/assets/logo.png"
-            alt="FitLog logo"
-            width={28}
-            height={28}
+            alt="FitLog"
+            width={23}
+            height={23}
             priority
           />
 
-          <span className="text-sm font-extrabold tracking-wide text-white sm:text-base">
+          <span className="text-[13px] font-black tracking-wide text-white">
             FITLOG
           </span>
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
           <Link
             href="/"
-            className="text-sm font-semibold text-white transition hover:text-[#ccff00]"
+            className={`rounded-full px-4 py-1.5 text-[10px] font-semibold transition ${
+              workoutActive
+                ? "bg-[#18220d] text-[#ccff00]"
+                : "text-[#858993] hover:text-white"
+            }`}
           >
-            Workout
+            Workouts
           </Link>
 
           <Link
             href="/my-plan"
-            className="text-sm font-semibold text-[#8d929c] transition hover:text-[#ccff00]"
+            className={`rounded-full px-4 py-1.5 text-[10px] font-semibold transition ${
+              planActive
+                ? "bg-[#18220d] text-[#ccff00]"
+                : "text-[#858993] hover:text-white"
+            }`}
           >
             My Plan
           </Link>
         </nav>
 
-        {/* Counters */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Plan / Saved */}
+        <div className="flex items-center gap-5">
           <Link
             href="/my-plan"
-            className="rounded-full bg-[#ccff00] px-2.5 py-1.5 text-[9px] font-black text-[#090a0c] sm:px-3 sm:text-[10px]"
+            className="flex items-center gap-1.5 text-[10px] font-medium text-[#a0a4ad] transition hover:text-white"
           >
-            Plan {plan.length}
+            <span>Plan</span>
+
+            <span className="flex h-[15px] min-w-[15px] items-center justify-center rounded-full bg-[#ccff00] px-1 text-[8px] font-black text-[#090a0c]">
+              {plan.length}
+            </span>
           </Link>
 
           <Link
             href="/my-plan"
-            className="rounded-full border border-[#3a3e47] px-2.5 py-1.5 text-[9px] font-black text-white sm:px-3 sm:text-[10px]"
+            className="flex items-center gap-1.5 text-[10px] font-medium text-[#a0a4ad] transition hover:text-white"
           >
-            Saved {saved.length}
+            <span>Saved</span>
+
+            <span className="flex h-[15px] min-w-[15px] items-center justify-center rounded-full border border-[#343840] px-1 text-[8px] font-bold text-[#858993]">
+              {saved.length}
+            </span>
           </Link>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="flex border-t border-[#202329] md:hidden">
+      {/* Mobile navigation */}
+      <div className="flex border-t border-[#202228] md:hidden">
         <Link
           href="/"
-          className="flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-white"
+          className={`flex-1 py-2.5 text-center text-[10px] font-bold uppercase tracking-wider ${
+            workoutActive
+              ? "text-[#ccff00]"
+              : "text-[#858993]"
+          }`}
         >
-          Workout
+          Workouts
         </Link>
 
         <Link
           href="/my-plan"
-          className="flex-1 border-l border-[#202329] py-2.5 text-center text-[10px] font-bold uppercase tracking-wider text-[#8d929c]"
+          className={`flex-1 border-l border-[#202228] py-2.5 text-center text-[10px] font-bold uppercase tracking-wider ${
+            planActive
+              ? "text-[#ccff00]"
+              : "text-[#858993]"
+          }`}
         >
           My Plan
         </Link>
