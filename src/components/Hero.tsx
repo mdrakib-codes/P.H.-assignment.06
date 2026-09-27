@@ -3,53 +3,55 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="border-b border-[#202329] bg-[#090a0c]">
-      <div className="mx-auto grid min-h-[560px] max-w-7xl items-center gap-12 px-6 py-16 md:grid-cols-2 md:px-10 lg:px-12">
+    <section className="bg-[#090a0c]">
+      <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 md:py-9">
         
-        {/* Left Content */}
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#ccff00]">
-            Workout Library
-          </p>
+        <div className="relative overflow-hidden rounded-xl border border-[#25282f] bg-[#15171d]">
+          
+          <div className="grid min-h-[318px] items-center md:grid-cols-[1.15fr_0.85fr]">
+            
+            {/* Left Content */}
+            <div className="px-7 py-12 sm:px-10 md:px-12 md:py-14">
+              
+              <p className="text-[9px] font-black uppercase tracking-[0.22em] text-[#ccff00]">
+                Workout Library
+              </p>
 
-          <h1 className="mt-5 max-w-xl text-5xl font-extrabold uppercase leading-[0.95] tracking-tight text-white sm:text-4xl lg:text-7xl">
-            Train with intent. Log
-            <br />
-            <span className="text-[#ccff00]">
-               every set.
-            </span>
-          </h1>
+              <h1 className="mt-5 max-w-[560px] font-[Impact,'Arial Narrow',sans-serif] text-[42px] uppercase leading-[0.94] tracking-[0.01em] text-white sm:text-[48px] md:text-[50px] lg:text-[52px]">
+                Train with intent.
+                <br />
+                Log every set.
+              </h1>
 
-          <p className="mt-6 max-w-lg text-sm leading-7 text-[#8d929c] sm:text-base">
-            FitLog is a dark, no-nonsense gym companion: pick a lift,
-            lock it into today&apos;s plan, and watch the week&apos;s
-            work add up.
-          </p>
+              <p className="mt-5 max-w-[470px] text-[11px] leading-[1.65] text-[#9297a1] sm:text-xs">
+                FitLog is a dark, no-nonsense gym companion: pick a lift,
+                lock it into today&apos;s plan, and watch the week&apos;s
+                work add up.
+              </p>
 
-          <Link
-            href="#library"
-            className="mt-8 inline-flex items-center gap-3 rounded-md bg-[#ccff00] px-5 py-3 text-xs font-bold uppercase tracking-wide text-[#090a0c] transition hover:bg-[#ddff4d]"
-          >
-            Browse workouts
+              <Link
+                href="#library"
+                className="mt-6 inline-flex items-center rounded-md bg-[#ccff00] px-4 py-2.5 text-[9px] font-black uppercase tracking-wide text-[#090a0c] transition hover:bg-[#d9ff3d]"
+              >
+                Browse workouts
+              </Link>
+            </div>
 
-            <span className="text-base"></span>
-          </Link>
-        </div>
+            {/* Right Image */}
+            <div className="relative flex h-full min-h-[270px] items-center justify-center px-6 pb-8 md:min-h-[318px] md:px-5 md:pb-0">
+              <div className="relative h-[260px] w-full max-w-[350px] md:h-[290px]">
+                <Image
+                  src="/assets/banner.png"
+                  alt="Workout training"
+                  fill
+                  priority
+                  className="object-contain"
+                />
+              </div>
+            </div>
 
-        {/* Right Image */}
-        <div className="relative flex items-center justify-center">
-          <div className="relative w-full max-w-[520px] overflow-hidden rounded-xl border border-[#252932] bg-[#111318]">
-            <Image
-              src="/assets/banner.png"
-              alt="Workout training"
-              width={800}
-              height={650}
-              priority
-              className="h-auto w-full object-cover"
-            />
           </div>
         </div>
-
       </div>
     </section>
   );
